@@ -1,4 +1,6 @@
+# terraform-aws-transit-gateway-attachment
 
+## Example usage of the terraform-aws-transit-gateway-attachment module
 module "idp-test" {
   source                  = "github.com/jppol-idp/terraform-aws-transit-gateway-attachment?ref=v1.0.0"
   dns_support             = true
