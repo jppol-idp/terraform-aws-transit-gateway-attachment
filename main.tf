@@ -14,21 +14,20 @@ data "aws_vpc" "tgw-vpc" {
   }
 }
 
-data "aws_subnet_ids" "tgw-subnets" {
-  vpc_id = data.aws_vpc.tgw-vpc.id
+data "aws_subnets" "tgw_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.tgw-vpc.id]
+  }
   filter {
     name   = "tag:${var.subnet-tag-filter-key}"
     values = [var.subnet-tag-filter-value]
   }
 }
 
-##########################
-# VPC peering connection #
-##########################
 resource "aws_ec2_transit_gateway_vpc_attachment" "default" {
-  subnet_ids         = data.aws_subnet_ids.tgw-subnets.ids
+  subnet_ids         = data.aws_subnets.tgw_subnets.ids
   transit_gateway_id = var.tgw-id
   vpc_id             = data.aws_vpc.tgw-vpc.id
   dns_support        = local.dns_support
-
 }
