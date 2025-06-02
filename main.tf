@@ -14,7 +14,7 @@ data "aws_vpc" "tgw-vpc" {
   }
 }
 
-data "aws_subnets" "tgw_subnets" {
+data "aws_subnets" "tgw_attachment_subnets" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.tgw-vpc.id]
@@ -33,4 +33,33 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "default" {
   tags = {
     Name = var.tgw-attachment-name
   }
+}
+
+# Lookup route tables associated with each subnet
+data "aws_route_table" "private_rt" {
+  for_each  = toset(data.aws_subnets.tgw_attachment_subnets.ids)
+  subnet_id = each.value
+}
+
+# Flatten combinations of route table IDs and destination CIDRs
+locals {
+  private_route_combinations = flatten([
+    for rt in data.aws_route_table.private_rt : [
+      for cidr in var.tgw-routed-subnets : {
+        route_table_id         = rt.id
+        destination_cidr_block = cidr
+      }
+    ]
+  ])
+}
+
+resource "aws_route" "tgw_routes" {
+  for_each = {
+    for combo in local.private_route_combinations : 
+    "${combo.route_table_id}:${combo.destination_cidr_block}" => combo
+  }
+
+  route_table_id         = each.value.route_table_id
+  destination_cidr_block = each.value.destination_cidr_block
+  transit_gateway_id     = var.tgw-id
 }
