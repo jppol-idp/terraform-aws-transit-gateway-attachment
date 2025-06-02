@@ -3,15 +3,15 @@
 ### Example usage of the terraform-aws-transit-gateway-attachment module, in this case from the idp-test account 971422674709 in jppol-idp/idp-main-setup/infrastructure/accounts/jppol-idp-test/971422674709/05.transit-gateway 05.transit-gateway
 *main.tf*
 ```yaml
-  module "idp-test" {
-  source                  = "github.com/jppol-idp/terraform-aws-transit-gateway-attachment?ref=v1.0.6"
+  module "idp-shared-test" {  # Change this to your module name
+  source                  = "github.com/jppol-idp/terraform-aws-transit-gateway-attachment?ref=v1.0.7"
   dns_support             = true
   tgw-id                  = "tgw-00300cb5cb91bbd19"
   vpc-tag-filter-key      = "Name"
-  vpc-tag-filter-value    = "idp-test"
+  vpc-tag-filter-value    = "idp-shared-test"  # Change this to your VPC tag
   subnet-tag-filter-key   = "tier"
   subnet-tag-filter-value = "private"
-  tgw-attachment-name     = "tgw-shared"  
+  tgw-attachment-name     = "tgw-shared"
 }
 ```
 
@@ -61,3 +61,5 @@ provider "aws" {
 ```
 
 It should be enough to replace `971422674709` with your account id 
+
+---
