@@ -41,31 +41,6 @@ data "aws_route_table" "private_rt" {
   subnet_id = each.value
 }
 
-# Flatten combinations of route table IDs and destination CIDRs
-# locals {
-#   private_route_combinations = flatten([
-#     for rt in data.aws_route_table.private_rt : [
-#       for cidr in var.tgw-routed-subnets : {
-#         route_table_id         = rt.id
-#         destination_cidr_block = cidr
-#       }
-#     ]
-#   ])
-# }
-# locals {
-#   # Get unique route table IDs only
-#   route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
-# 
-#   # Now generate unique combinations
-#   private_route_combinations = flatten([
-#     for rt_id in local.route_table_ids : [
-#       for cidr in var.tgw-routed-subnets : {
-#         route_table_id         = rt_id
-#         destination_cidr_block = cidr
-#       }
-#     ]
-#   ])
-# }
 locals {
   # Get unique route table IDs from your data source
   unique_route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
@@ -80,17 +55,6 @@ locals {
     ]
   ])
 }
-
-# resource "aws_route" "tgw_routes" {
-#   for_each = {
-#     for combo in local.private_route_combinations : 
-#     "${combo.route_table_id}:${combo.destination_cidr_block}" => combo
-#   }
-# 
-#   route_table_id         = each.value.route_table_id
-#   destination_cidr_block = each.value.destination_cidr_block
-#   transit_gateway_id     = var.tgw-id
-# }
 
 resource "aws_route" "tgw_routes" {
   for_each = {
