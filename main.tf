@@ -30,4 +30,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "default" {
   transit_gateway_id = var.tgw-id
   vpc_id             = data.aws_vpc.tgw-vpc.id
   dns_support        = local.dns_support
+  tags = {
+    name = data.aws_vpc.tgw-vpc.tags["name"]
+  }
 }
