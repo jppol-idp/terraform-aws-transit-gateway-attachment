@@ -31,3 +31,9 @@ variable "vpc-tag-filter-value" {
   description = "Value of the tag to filter subnets. Default value: `*Private*`."
   type        = string
 }
+
+variable "tgw-attachment-name" {
+  description = "Name of the tgw attachment. Default value: `None`."
+  type        = string
+  default     = ""
+}
