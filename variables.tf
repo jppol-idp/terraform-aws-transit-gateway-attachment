@@ -39,7 +39,7 @@ variable "tgw-attachment-name" {
 }
 
 variable "tgw-routed-subnets" {
-  description = "List of subnets to route to tgw. Default value: `[rfc1918]`."
+  description = "List of subnets to route to tgw. Default value: ['10.0.0.0/8', '172.16.0.0/12']."
   type        = list(string)
-  default     = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+  default     = ["10.0.0.0/8", "172.16.0.0/12"]
 }

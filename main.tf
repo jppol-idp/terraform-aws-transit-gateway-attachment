@@ -41,12 +41,15 @@ data "aws_route_table" "private_rt" {
   subnet_id = each.value
 }
 
-# Flatten combinations of route table IDs and destination CIDRs
 locals {
+  # Get unique route table IDs from your data source
+  unique_route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
+
+  # Create all unique combinations of route table IDs and routed subnets
   private_route_combinations = flatten([
-    for rt in data.aws_route_table.private_rt : [
+    for rt_id in local.unique_route_table_ids : [
       for cidr in var.tgw-routed-subnets : {
-        route_table_id         = rt.id
+        route_table_id         = rt_id
         destination_cidr_block = cidr
       }
     ]
