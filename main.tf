@@ -52,13 +52,27 @@ data "aws_route_table" "private_rt" {
 #     ]
 #   ])
 # }
+# locals {
+#   # Get unique route table IDs only
+#   route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
+# 
+#   # Now generate unique combinations
+#   private_route_combinations = flatten([
+#     for rt_id in local.route_table_ids : [
+#       for cidr in var.tgw-routed-subnets : {
+#         route_table_id         = rt_id
+#         destination_cidr_block = cidr
+#       }
+#     ]
+#   ])
+# }
 locals {
-  # Get unique route table IDs only
-  route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
+  # Get unique route table IDs from your data source
+  unique_route_table_ids = distinct([for rt in data.aws_route_table.private_rt : rt.id])
 
-  # Now generate unique combinations
+  # Create all unique combinations of route table IDs and routed subnets
   private_route_combinations = flatten([
-    for rt_id in local.route_table_ids : [
+    for rt_id in local.unique_route_table_ids : [
       for cidr in var.tgw-routed-subnets : {
         route_table_id         = rt_id
         destination_cidr_block = cidr
