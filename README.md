@@ -10,5 +10,6 @@ module "idp-test" {
   vpc-tag-filter-value    = "idp-test"
   subnet-tag-filter-key   = "Tier"
   subnet-tag-filter-value = "*Private*"
+  tgw-attachement-name    = "tgw-shared"
 }
 ```
