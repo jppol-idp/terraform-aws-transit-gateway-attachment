@@ -1,6 +1,7 @@
 locals {
 
-  dns_support = var.dns_support ? "enable" : "disable"
+  dns_support    = var.dns_support ? "enable" : "disable"
+  appliance_mode = var.tgw-appliance-mode-support ? "enable" : "disable"
 }
 
 ##########################
@@ -26,10 +27,11 @@ data "aws_subnets" "tgw_attachment_subnets" {
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "default" {
-  subnet_ids         = data.aws_subnets.tgw_attachment_subnets.ids
-  transit_gateway_id = var.tgw-id
-  vpc_id             = data.aws_vpc.tgw-vpc.id
-  dns_support        = local.dns_support
+  subnet_ids             = data.aws_subnets.tgw_attachment_subnets.ids
+  transit_gateway_id     = var.tgw-id
+  vpc_id                 = data.aws_vpc.tgw-vpc.id
+  dns_support            = local.dns_support
+  appliance_mode_support = local.appliance_mode
   tags = {
     Name = var.tgw-attachment-name
   }
@@ -58,7 +60,7 @@ locals {
 
 resource "aws_route" "tgw_routes" {
   for_each = {
-    for combo in local.private_route_combinations : 
+    for combo in local.private_route_combinations :
     "${combo.route_table_id}:${combo.destination_cidr_block}" => combo
   }
 

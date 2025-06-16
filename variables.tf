@@ -43,3 +43,9 @@ variable "tgw-routed-subnets" {
   type        = list(string)
   default     = ["10.0.0.0/8", "172.16.0.0/12"]
 }
+
+variable "tgw-appliance-mode-support" {
+  description = "Whether tgw attachment supports appliance mode. Valid values: `disable`, `enable`. Default value: `disable`."
+  type        = string
+  default     = "disable"
+}
